@@ -25,7 +25,7 @@ class Day1Should {
 
         val sequence = readNumbersFromFile(tempFile)
 
-        assertThat(sequence).isEqualTo(listOf("-10", "+5"))
+        assertThat(sequence).isEqualTo(listOf(-10, 5))
     }
 
     @Test
