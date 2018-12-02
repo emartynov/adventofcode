@@ -1,11 +1,18 @@
 import java.io.File
 
-class Day1
 
 fun main() {
-    val url = Day1::class.java.getResource("input1.txt")
-    val inputFile = File(url.path)
+    val inputFile = ResourcesHelper.getFileFromResources(1)
 
     println(calculateDay1CollectSolution(inputFile))
     println(calculateDay1FrequencySolution(inputFile))
+}
+
+class ResourcesHelper {
+    companion object {
+        fun getFileFromResources(day: Int): File {
+            val url = ResourcesHelper::class.java.getResource("input$day.txt")
+            return File(url.path)
+        }
+    }
 }
