@@ -69,4 +69,36 @@ class Day2Should {
 
         assertThat(checksum).isEqualTo(1)
     }
+
+    @Test
+    fun `Transform word to map`() {
+        assertThat("abca".transformToCharsMap()).isEqualTo(mapOf('a' to 2, 'b' to 1, 'c' to 1))
+    }
+
+    @Test
+    fun `Number of different characters`() {
+        val word1 = "abcd"
+        val word2 = "abce"
+
+        assertThat(
+            numberOfDifferentCharactersInWords(
+                word1.transformToCharsMap(),
+                word2.transformToCharsMap()
+            )
+        ).isEqualTo(1)
+    }
+
+    @Test
+    fun `Return correct pair that has only one char difference`() {
+        val words = listOf("aaa", "ccc", "bbb", "aab")
+
+        assertThat(oneCharacterPair(words)).isEqualTo(Pair("aaa", "aab"))
+    }
+
+    @Test
+    fun `Return non changed chars`() {
+        val words = Pair("aaa", "aab")
+
+        assertThat(commonChars(words)).isEqualTo("aa")
+    }
 }

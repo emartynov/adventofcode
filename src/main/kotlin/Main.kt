@@ -10,6 +10,7 @@ fun main() {
     println("Day2")
     val inputFile2 = ResourcesHelper.getFileFromResources(2)
     println("Checksum: ${calculateFileChecksum(inputFile2)}")
+    println("Non changed: ${onePairNonChangedChars(inputFile2)}")
 }
 
 class ResourcesHelper {
