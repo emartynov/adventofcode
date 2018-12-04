@@ -19,12 +19,12 @@ fun String.toClaim(): Claim {
     )
 }
 
-fun parseHeight(s: String) = s.substring(s.indexOf('x') + 1).toInt()
+private fun parseHeight(s: String) = s.substring(s.indexOf('x') + 1).toInt()
 
-fun parseWidth(s: String) = s.substring(0 until s.indexOf('x')).toInt()
+private fun parseWidth(s: String) = s.substring(0 until s.indexOf('x')).toInt()
 
-fun parseY(s: String) = s.substring(s.indexOf(',') + 1 until s.indexOf(':')).toInt()
+private fun parseY(s: String) = s.substring(s.indexOf(',') + 1 until s.indexOf(':')).toInt()
 
-fun parseX(s: String): Int = s.substring(0 until s.indexOf(',')).toInt()
+private fun parseX(s: String): Int = s.substring(0 until s.indexOf(',')).toInt()
 
 private fun parseId(s: String) = s.substring(1).trim().toInt()
