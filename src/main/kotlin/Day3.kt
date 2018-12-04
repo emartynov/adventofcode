@@ -38,8 +38,8 @@ fun buildMap(claims: List<Claim>): Map<Pair<Int, Int>, Int> {
         for (i in 0 until claim.width) {
             for (j in 0 until claim.height) {
                 val coords = Pair(claim.x + i, claim.y + j)
-                val inchClaimed = result[coords] ?: 0
-                result[coords] = inchClaimed + 1
+                val claimedNumber = result[coords] ?: 0
+                result[coords] = claimedNumber + 1
             }
         }
     }
@@ -51,7 +51,32 @@ fun calculateOverlaps(mapOfClaims: Map<Pair<Int, Int>, Int>) = mapOfClaims.map {
     .filter { it > 1 }
     .count()
 
-fun calculateOverclaimedFromFile(file: File): Int {
+fun calculateOverlappedFromFile(file: File): Int {
     val claims = file.readLines().map { it.toClaim() }
     return calculateOverlaps(buildMap(claims))
 }
+
+fun Claim.overlaps(mapOfClaims: Map<Pair<Int, Int>, Int>): Boolean {
+    for (i in 0 until this.width) {
+        for (j in 0 until this.height) {
+            val coords = Pair(this.x + i, this.y + j)
+            val claimedNumber = mapOfClaims[coords] ?: 0
+
+            if (claimedNumber > 1) return true
+        }
+    }
+
+    return false
+}
+
+fun findNotOverlappedFromFile(file: File): Int {
+    val claims = file.readLines().map { it.toClaim() }
+    val map = buildMap(claims)
+
+    for (claim in claims) {
+        if (!claim.overlaps(map)) return claim.id
+    }
+
+    return -1
+}
+

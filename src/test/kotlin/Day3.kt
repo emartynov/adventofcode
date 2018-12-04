@@ -16,8 +16,16 @@ class Day3Should {
     @Test
     fun `Calculate claimed more then one time`() {
         val map = mapOf(Pair(0, 0) to 1, Pair(0, 1) to 2, Pair(1, 0) to 1, Pair(1, 1) to 1)
-        assertThat(calculateOverlaps(map))
-            .isEqualTo(1)
+
+        assertThat(calculateOverlaps(map)).isEqualTo(1)
+    }
+
+    @Test
+    fun `Return true if not overlaps`() {
+        val map = mapOf(Pair(0, 0) to 1, Pair(0, 1) to 1, Pair(1, 0) to 2, Pair(1, 1) to 2)
+        val claim = Claim(1, 0, 0, 1, 2)
+
+        assertThat(claim.overlaps(map)).isFalse()
     }
 }
 
