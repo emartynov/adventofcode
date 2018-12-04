@@ -16,6 +16,9 @@ fun main() {
     val inputFile3 = ResourcesHelper.getFileFromResources(3)
     println("Overclaimed: ${calculateOverlappedFromFile(inputFile3)}")
     println("Not overlaped id: ${findNotOverlappedFromFile(inputFile3)}")
+
+    println("Day4")
+    val inputFile4 = ResourcesHelper.getFileFromResources(4)
 }
 
 class ResourcesHelper {
