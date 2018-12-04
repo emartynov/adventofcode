@@ -14,6 +14,7 @@ fun main() {
 
     println("Day3")
     val inputFile3 = ResourcesHelper.getFileFromResources(3)
+    println("Overclaimed: ${calculateOverclaimedFromFile(inputFile3)}")
 }
 
 class ResourcesHelper {
