@@ -19,6 +19,7 @@ fun main() {
 
     println("Day4")
     val inputFile4 = ResourcesHelper.getFileFromResources(4)
+    println("IDxMinute:${findIDxMinute(inputFile4)}")
 }
 
 class ResourcesHelper {

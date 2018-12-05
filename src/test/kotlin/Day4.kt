@@ -98,4 +98,13 @@ class Day4Should {
 
         assertThat(champion.id).isEqualTo(1)
     }
+
+    @Test
+    fun `Find most slept minute`() {
+        val sleep = SleepMap(1, listOf(IntRange(0, 10), IntRange(8, 10), IntRange(9, 11)))
+
+        val mostSleptMinute = findMostSleptMinute(sleep)
+
+        assertThat(mostSleptMinute).isEqualTo(9)
+    }
 }

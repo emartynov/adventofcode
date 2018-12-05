@@ -1,10 +1,22 @@
+import java.io.File
+
 data class DateTime(
     val year: Int,
     val month: Int,
     val day: Int,
     val hour: Int,
     val minute: Int
-)
+) : Comparable<DateTime> {
+    override fun compareTo(other: DateTime): Int {
+        return when {
+            this.year != other.year -> (this.year - other.year) * 100 * 100 * 100 * 1000
+            this.month != other.month -> (this.month - other.month) * 100 * 100 * 100
+            this.day != other.day -> (this.day - other.day) * 100 * 100
+            this.hour != other.hour -> (this.hour - other.hour) * 100
+            else -> (this.minute - other.minute)
+        }
+    }
+}
 
 sealed class Event {
     object FallsAsleep : Event()
@@ -126,5 +138,25 @@ private fun combineRanges(ranges: List<IntRange>): List<IntRange> {
     result.add(currentRange)
 
     return result
+}
+
+fun findMostSleptMinute(sleep: SleepMap): Int {
+    val minutesMap = mutableMapOf<Int, Int>()
+
+    for (interval in sleep.sleeps) {
+        for (i in interval) {
+            val times = minutesMap[i] ?: 0
+            minutesMap[i] = times + 1
+        }
+    }
+
+    return minutesMap.maxBy { it -> it.value }!!.key
+}
+
+fun findIDxMinute(file: File): Int {
+    val sleeps = file.readLines().map { it.toGuardEntry() }.sortedBy { it.dateTime }.toSleepMap()
+    val mostSleepyGuard = findMostSleepy(sleeps)
+    val mostSleptMinute = findMostSleptMinute(mostSleepyGuard)
+    return mostSleepyGuard.id * mostSleptMinute
 }
 
