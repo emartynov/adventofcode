@@ -56,8 +56,8 @@ data class SleepMap(
     val sleeps: List<IntRange>
 )
 
-fun List<Entry>.toSleepMap(): List<SleepMap> {
-    val result = mutableListOf<SleepMap>()
+fun List<Entry>.toSleepMap(): Map<Int, List<SleepMap>> {
+    val result = mutableMapOf<Int, MutableList<SleepMap>>()
 
     var id = -1
     val sleeps = mutableListOf<IntRange>()
@@ -79,12 +79,14 @@ fun List<Entry>.toSleepMap(): List<SleepMap> {
 }
 
 private fun addSleepMap(
-    result: MutableList<SleepMap>,
+    result: MutableMap<Int, MutableList<SleepMap>>,
     id: Int,
     sleeps: MutableList<IntRange>
 ) {
     if (id != -1) {
-        result.add(SleepMap(id, sleeps))
+        val list = result[id] ?: mutableListOf()
+        list.add(SleepMap(id, sleeps.toList()))
+        result[id] = list
     }
 }
 
@@ -117,8 +119,7 @@ private fun calculateSleptMinutes(sleeps: List<IntRange>): Int {
     if (sleeps.isEmpty())
         return 0
     else {
-        val combined = combineRanges(sleeps)
-        return combined.map { it.last - it.first }.sum()
+        return sleeps.map { it.last - it.first }.sum()
     }
 }
 
@@ -154,7 +155,12 @@ fun findMostSleptMinute(sleep: SleepMap): Int {
 }
 
 fun findIDxMinute(file: File): Int {
-    val sleeps = file.readLines().map { it.toGuardEntry() }.sortedBy { it.dateTime }.toSleepMap()
+    val entries = file.readLines().map { it.toGuardEntry() }.sortedBy { it.dateTime }
+    val sleepMap = entries.toSleepMap()
+    val sleeps = sleepMap
+        .mapValues { it -> it.value.reduce { acc, sm -> SleepMap(acc.id, acc.sleeps + sm.sleeps) } }
+        .values
+        .toList()
     val mostSleepyGuard = findMostSleepy(sleeps)
     val mostSleptMinute = findMostSleptMinute(mostSleepyGuard)
     return mostSleepyGuard.id * mostSleptMinute

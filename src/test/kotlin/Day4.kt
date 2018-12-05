@@ -51,8 +51,9 @@ class Day4Should {
         val sleepMaps = events.toSleepMap()
 
         assertThat(sleepMaps.size).isEqualTo(1)
-        assertThat(sleepMaps[0].id).isEqualTo(1)
-        assertThat(sleepMaps[0].sleeps).isEqualTo(listOf(IntRange(34, 36), IntRange(45, 50)))
+        assertThat(sleepMaps[1]!!.size).isEqualTo(1)
+        assertThat(sleepMaps[1]!![0].id).isEqualTo(1)
+        assertThat(sleepMaps[1]!![0].sleeps).isEqualTo(listOf(IntRange(34, 36), IntRange(45, 50)))
     }
 
     @Test
@@ -65,8 +66,8 @@ class Day4Should {
         val sleepMaps = events.toSleepMap()
 
         assertThat(sleepMaps.size).isEqualTo(2)
-        assertThat(sleepMaps[0].id).isEqualTo(1)
-        assertThat(sleepMaps[1].id).isEqualTo(2)
+        assertThat(sleepMaps[1]!![0].id).isEqualTo(1)
+        assertThat(sleepMaps[2]!![0].id).isEqualTo(2)
     }
 
     @Test
