@@ -9,7 +9,7 @@ data class DateTime(
 sealed class Event {
     object FallsAsleep : Event()
     object WakesUp : Event()
-    data class ShiftStart(val guardId: String) : Event()
+    data class ShiftStart(val guardId: Int) : Event()
 }
 
 data class Entry(val dateTime: DateTime, val event: Event)
@@ -30,9 +30,101 @@ fun String.toGuardEntry(): Entry {
         "wakes up" -> Event.WakesUp
         else -> {
             val idStartIndex = eventString.indexOf('#')
-            Event.ShiftStart(eventString.substring(idStartIndex + 1, eventString.indexOf(' ', idStartIndex)))
+            val isEndIndex = eventString.indexOf(' ', idStartIndex)
+            val isString = eventString.substring(idStartIndex + 1, isEndIndex)
+            Event.ShiftStart(isString.toInt())
         }
     }
 
     return Entry(DateTime(year, month, day, hour, minute), event)
 }
+
+data class SleepMap(
+    val id: Int,
+    val sleeps: List<IntRange>
+)
+
+fun List<Entry>.toSleepMap(): List<SleepMap> {
+    val result = mutableListOf<SleepMap>()
+
+    var id = -1
+    val sleeps = mutableListOf<IntRange>()
+    var startMinute = 0
+    for (entry in this) {
+        when (entry.event) {
+            is Event.ShiftStart -> {
+                addSleepMap(result, id, sleeps)
+                id = entry.event.guardId
+                sleeps.clear()
+            }
+            is Event.FallsAsleep -> startMinute = entry.dateTime.minute
+            is Event.WakesUp -> sleeps.add(IntRange(startMinute, entry.dateTime.minute))
+        }
+    }
+    addSleepMap(result, id, sleeps)
+
+    return result
+}
+
+private fun addSleepMap(
+    result: MutableList<SleepMap>,
+    id: Int,
+    sleeps: MutableList<IntRange>
+) {
+    if (id != -1) {
+        result.add(SleepMap(id, sleeps))
+    }
+}
+
+fun List<SleepMap>.combine(): List<SleepMap> =
+    this.groupBy { it.id }
+        .mapValues { it -> SleepMap(it.key, combineSleeps(it.value)) }
+        .values
+        .toList()
+
+fun combineSleeps(list: List<SleepMap>) = list.map { it.sleeps }
+    .flatten()
+    .sortedBy { it.first }
+
+fun findMostSleepy(sleeps: List<SleepMap>): SleepMap {
+    var result = SleepMap(-1, emptyList())
+    var maxSleptMinutes = 0
+
+    for (sleep in sleeps) {
+        val sleptMinutes = calculateSleptMinutes(sleep.sleeps)
+        if (sleptMinutes > maxSleptMinutes) {
+            maxSleptMinutes = sleptMinutes
+            result = sleep
+        }
+    }
+
+    return result
+}
+
+private fun calculateSleptMinutes(sleeps: List<IntRange>): Int {
+    if (sleeps.isEmpty())
+        return 0
+    else {
+        val combined = combineRanges(sleeps)
+        return combined.map { it.last - it.first }.sum()
+    }
+}
+
+private fun combineRanges(ranges: List<IntRange>): List<IntRange> {
+    val result = mutableListOf<IntRange>()
+    var currentRange = ranges[0]
+
+    for (i in 1 until ranges.size) {
+        val nextRange = ranges[i]
+        currentRange = if (nextRange.first > currentRange.last) {
+            result.add(currentRange)
+            nextRange
+        } else {
+            IntRange(currentRange.start, Math.max(currentRange.last, nextRange.last))
+        }
+    }
+    result.add(currentRange)
+
+    return result
+}
+
